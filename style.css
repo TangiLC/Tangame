@@ -1,0 +1,6 @@
+.fenetre{
+    position:relative;
+    height:600px;
+    border-radius: 8px;
+    border:2px solid black;
+}
