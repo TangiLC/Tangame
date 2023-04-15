@@ -1,6 +1,31 @@
+@font-face {
+    font-family: 'apple_regular';
+    src: url("./font/appleiioldschool-webfont.woff2") format('woff2'),
+         url("./font/appleiioldschool-webfont.woff") format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+
+body{
+    max-width:1400px;
+    margin:auto;
+    font-family: 'apple_regular';
+}
+
+.centered{
+   margin-left:auto;
+   margin-right: auto;
+}
+
 .fenetre{
     position:relative;
     height:600px;
     border-radius: 8px;
     border:2px solid black;
+}
+
+#avion{
+    position:relative;
 }
