@@ -31,9 +31,24 @@ body{
 }
 
 #avion{
-    position:relative;
+    display:inline-block;
+    position:absolute;
+    z-index: 99;
+    border:2px solid red;
 }
 
 #bomb{
-    position:relative;
+    display:inline-block;
+    position:absolute;
+    z-index: 10;
+    border:2px solid blue;
+}
+
+.building{
+    display:inline-block;
+    position:absolute;
+    bottom:0px;
+    z-index: 1;
+    border:1px solid black;
+    font-size: 70%;
 }
