@@ -19,6 +19,10 @@ body{
    margin-right: auto;
 }
 
+.leftInfo{
+    font-size: 70%;
+}
+
 .fenetre{
     position:relative;
     height:600px;
@@ -27,5 +31,9 @@ body{
 }
 
 #avion{
+    position:relative;
+}
+
+#bomb{
     position:relative;
 }
