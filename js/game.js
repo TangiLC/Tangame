@@ -2,12 +2,17 @@ let level=1;
 let score=0;
 let hiScore=0;
 let altitude=500;
+let gameLoop=300;         // intervalle loop
 let planeX=-1;            //position en X de l'avion
 let nbBomb=0;
 let bombX=0;              //position en X de la bombe
 let bombAltitude=550;
 let planeSpeed=2;
 let buildings=[];         //array des buildings [{bdleft:int,'bdheight:int,'bdcol:'#hexa_color'}]
+
+const dropingBomb=document.addEventListener('keyup', ev => {
+    if (ev.code === 'Space') {dropBomb(altitude,planeX)}
+  });
 
 const DOMLevel=document.getElementById('score');
 const DOMScore=document.getElementById('level');
@@ -146,23 +151,32 @@ function crashPlane(){               //altitude avion <altitude batiment
     DOMAvion.style.left=`${crashIndex}%`;
     DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='90px' width='auto'>`;
     console.log('crash at',altitude,findHighest(buildings));
+    endGame();
+}
+
+function endGame(){
+    document.removeEventListener('keyup', ev => {
+        if (ev.code === 'Space') {dropBomb(altitude,planeX)}
+      });
+    planeSpeed=0;
+    clearInterval(gameLoop);
 }
 
 
 function mainGame(){            //boucle principale
-    const dropingBomb=document.addEventListener('keyup', ev => {
-        if (ev.code === 'Space') {dropBomb(altitude,planeX)}
-      });
-    let flight= setInterval(function() {
+    
+    gameLoop= setInterval(function() {
         movePlane(altitude,bombAltitude);
         planeX +=planeSpeed;
         if (bombAltitude<550){bombAltitude-=30};
         if (planeX>=98){planeX=-1;altitude -=25;}
-        if(altitude+15 <buildings[findHighest(buildings)].bdHeight){crashPlane();clearInterval(flight);};
-        if (altitude <=-10){DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
-           clearInterval(flight);}
+        if(altitude+5 <buildings[findHighest(buildings)].bdHeight){
+            crashPlane();
+            endGame();}
+        if (altitude <=-10){
+            DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
+            endGame();}
         }, 300);
-    
 }  
 
 initBuildings(level,buildings);
