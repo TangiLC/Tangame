@@ -80,7 +80,7 @@ function dropBomb(alti,lefti){                 //lancement bombe si aucune bombe
     bombX=lefti;
     DOMBomb.style.bottom=`${bombAltitude}px`;
     DOMBomb.style.left=`${bombX}%`;
-    DOMBomb.innerHTML="<img src='../img/torpedo.bmp' width='30px' height='auto'>";}
+    DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='30px' height='auto'>";}
 }
 
 function affichScore(){
@@ -121,11 +121,11 @@ function moveBomb(bombAlti){            //descente de la bombe -contrôle du bui
     if (bdIndex<0){bdIndex=0}
     if (bombAlti>buildings[bdIndex].bdHeight && DOMBomb.innerHTML!="" && bombAlti>0){
         DOMBomb.style.bottom=`${bombAlti}px`;
-        DOMBomb.innerHTML="<img src='../img/torpedo.bmp' width='30px' height='auto'>";
+        DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='30px' height='auto'>";
 
     }
     else if (bombAlti<=buildings[bdIndex].bdHeight && DOMBomb.innerHTML!=""){
-        DOMBomb.innerHTML="<img src='../img/torpedo.bmp' width='50px' height='auto'>";
+        DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='50px' height='auto'>";
         bombAltitude=550;
         explodeBuilding(bdIndex);}
 }
@@ -134,7 +134,7 @@ function movePlane(alti,bombAlti){     //affichage avion
     DOMAvion.innerHTML= "";
     DOMAvion.style.bottom=`${alti}px`;
     DOMAvion.style.left=`${planeX}%`;
-    DOMAvion.innerHTML=`<img src='../img/spritePlane.gif' width='80px' height='auto'>`;
+    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' width='80px' height='auto'>`;
     affichScore();
     moveBomb(bombAlti);
 }
@@ -144,7 +144,7 @@ function crashPlane(){               //altitude avion <altitude batiment
     console.log(crashIndex);
         
     DOMAvion.style.left=`${crashIndex}%`;
-    DOMAvion.innerHTML=`<p>YOU LOST</p><img src='../img/kaboom.gif' height='90px' width='auto'>`;
+    DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='90px' width='auto'>`;
     console.log('crash at',altitude,findHighest(buildings));
 }
 
@@ -159,7 +159,7 @@ function mainGame(){            //boucle principale
         if (bombAltitude<550){bombAltitude-=30};
         if (planeX>=98){planeX=-1;altitude -=25;}
         if(altitude+15 <buildings[findHighest(buildings)].bdHeight){crashPlane();clearInterval(flight);};
-        if (altitude <=-10){DOMAvion.innerHTML=`<img src='../img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
+        if (altitude <=-10){DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
            clearInterval(flight);}
         }, 300);
     
