@@ -44,7 +44,7 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
 }
 
 function ready(){                              //attente du lancement
-    planeSpeed=Math.floor(3+level*.5);
+    planeSpeed=Math.floor(3+level*.3);
     affichScore();
     if (document.getElementById('startMessage')==undefined){
        let divStartMssg=document.createElement('div');
@@ -145,14 +145,14 @@ function moveBomb(bombAlti){            //descente de la bombe -contrôle du bui
         explodeBuilding(bdIndex);}
 }
 
-function movePlane(alti,bombAlti){     //affichage avion
-    DOMAvion.innerHTML= "";
+function movePlane(alti,posX,bombAlti){     //affichage avion
+    //DOMAvion.innerHTML= "";
     DOMAvion.style.bottom=`${alti}px`;
-    DOMAvion.style.left=`${planeX}%`;
+    DOMAvion.style.left=`${posX}%`;
     if(alti==0){DOMAvion.innerHTML=`<p>SAFE LANDING</p><img src='img/spritePlane.gif' height='auto' width='90px'>`;}
-    else {DOMAvion.innerHTML=`<img src='img/spritePlane.gif' width='80px' height='auto'>`;}
-    affichScore();
-    moveBomb(bombAlti);
+    else {DOMAvion.innerHTML=`<img src='img/spritePlane.gif' width='80px' height='auto'>`;
+        affichScore();
+        moveBomb(bombAlti);}
 }
 
 function crashPlane(){               //altitude avion <altitude batiment
@@ -165,24 +165,21 @@ function crashPlane(){               //altitude avion <altitude batiment
     endGame();
 }
 
-function endGame(){                         //fin de partie, sortie de boucle################
+async function endGame(){                         //fin de partie, sortie de boucle################
     document.removeEventListener('keyup', ev => {
         if (ev.code === 'Space') {dropBomb(altitude,planeX)}
       });
     planeSpeed=0;
     clearInterval(gameLoop);
+    
 }
-async function winRound(){                    //passage au level suivant, retour avion altitude init
-    await timer(500);
-    for(let i=0;i<=80;i++){planeX=i; movePlane(0,550); await timer(Math.ceil(50+3*i));}
-    DOMAvion.innerHTML=`<p>YOU WIN</p><img src='img/spritePlane.gif' height='100px' width='auto'>`;
-    await timer(800);
-    endGame();
-    planeX=0;
+
+async function newLevel(){
+    planeX=-2;
     level+=1;
-    altitude=540;
-    planeX =-2;
+    altitude=550-level;
     nbBomb =0;
+    bombAltitude=550;
     buildings=[];
     DOMAvion.innerHTML="";
     initBuildings(level,buildings);
@@ -191,14 +188,24 @@ async function winRound(){                    //passage au level suivant, retour
         if (ev.code === 'Space') {dropBomb(altitude,planeX)}
       });
     ready();
+}
 
+async function winRound(){                    //passage au level suivant, retour avion altitude init
+    //await timer(500);
+    for(let landing=0;landing<=80;landing+=5){
+        movePlane(0,landing,550);
+        await timer(Math.ceil(50+3*landing));}
+    DOMAvion.innerHTML=`<p>YOU WIN</p><img src='img/spritePlane.gif' height='auto' width='95px'>`;
+    await timer(2000);
+    endGame();  
+    newLevel();   
 }
 
 
 function mainGame(){            //boucle principale
     
     gameLoop= setInterval(function() {
-        movePlane(altitude,bombAltitude);
+        movePlane(altitude,planeX,bombAltitude);
         planeX +=planeSpeed;
         if (bombAltitude<550){bombAltitude-=40};
         if (planeX>=98){planeX=-1;altitude -=25;}
