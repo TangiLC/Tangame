@@ -143,7 +143,7 @@ function mainGame(){
         movePlane(altitude,bombAltitude);
         leftPos +=planeSpeed; console.log('speed',planeSpeed);
         if (bombAltitude<550){bombAltitude-=30};
-        if (leftPos>=97){leftPos=-1;altitude -=25;}
+        if (leftPos>=98){leftPos=-1;altitude -=25;}
         if (altitude <0){DOMAvion.innerHTML=`<img src='./img/spritePlane.gif' height='60px' width='auto'><p>END</p>`;
            clearInterval(flight);}
         }, 300);

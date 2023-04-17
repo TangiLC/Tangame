@@ -28,6 +28,7 @@ body{
     height:600px;
     border-radius: 8px;
     border:2px solid black;
+    display:inline-flex;
 }
 
 #avion{
@@ -53,9 +54,11 @@ body{
 }
 
 .startMessage{
-    display:inline-block;
+    display:inline-flex;
     position:absolute;
-    bottom:50%;
+    width:100%;
+    bottom:70%;
     margin:auto;
+    justify-content: center;
     z-index:99;
 }
