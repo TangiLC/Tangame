@@ -37,14 +37,14 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
     let widthOfBld = (99/(numberOfBld));
     for (let i=0; i<numberOfBld; i++){
         let colorIndex=Math.floor(Math.random()*15);
-        let buildingHeight=10+Math.floor(Math.random()*15);        //modifier pour level##########################
+        let buildingHeight=50+level*3+Math.floor(Math.random()*150);        //modifier pour level####
         buildings[i]={'bdleft':i*widthOfBld,'bdHeight':buildingHeight,'bdCol':buildingCol[colorIndex]}
     }
     drawBuildings(buildings,widthOfBld);
 }
 
 function ready(){                              //attente du lancement
-    planeSpeed=Math.floor(4+level*.3);
+    planeSpeed=Math.floor(5+level*.5);
     affichScore();
     if (document.getElementById('startMessage')==undefined){
        let divStartMssg=document.createElement('div');
@@ -78,7 +78,7 @@ function drawBuildings(buildings,widthOfBld){    //display du DOM -création de 
         divBldg.style.width=`${widthOfBld}%`;
         divBldg.style.backgroundColor=buildings[i].bdCol;
         //divBldg.style.backgroundImage=`url(../img/windows.png)`;
-        divBldg.innerText=buildings[i].bdHeight;
+        if(buildings[i].bdHeight>0){divBldg.innerText=buildings[i].bdHeight};
         DOMFenetre.appendChild(divBldg);
     }
 }
@@ -119,7 +119,10 @@ async function kaboom(myIndex){               //effet de destruction building pa
 
 function explodeBuilding(bdIndex){        //destruction building par la bombe (hauteur réduite)
     buildings[bdIndex].bdHeight-=25;
-    if (buildings[bdIndex].bdHeight<=0){buildings[bdIndex].bdHeight=0}
+    if (buildings[bdIndex].bdHeight<=0){
+        buildings[bdIndex].bdHeight=-3;
+        document.getElementById(`bd_${bdIndex}`).innerText="";
+    }
     //DOMBomb.innerText="";
     document.getElementById(`bd_${bdIndex}`).style.height=buildings[bdIndex].bdHeight;
     kaboom(bdIndex);
@@ -196,7 +199,7 @@ function mainGame(){            //boucle principale
     gameLoop= setInterval(function() {
         movePlane(altitude,bombAltitude);
         planeX +=planeSpeed;
-        if (bombAltitude<550){bombAltitude-=30};
+        if (bombAltitude<550){bombAltitude-=40};
         if (planeX>=98){planeX=-1;altitude -=25;}
         if(altitude+20 <buildings[findHighest(buildings)].bdHeight){
             crashPlane();
