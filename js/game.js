@@ -1,7 +1,7 @@
-let level=1;
+let level=6;
 let score=0;
 let hiScore=0;
-let altitude=500;
+let altitude=540;
 let gameLoop=300;         // intervalle loop
 let planeX=-1;            //position en X de l'avion
 let nbBomb=0;
@@ -45,6 +45,7 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
 
 function ready(){                              //attente du lancement
     planeSpeed=Math.floor(2+level*.3);
+    affichScore();
     let divStartMssg=document.createElement('div');
     divStartMssg.setAttribute('class','startMessage');
     divStartMssg.innerText=`LEVEL ${level} : PRESS ANY KEY TO START`;
@@ -73,14 +74,15 @@ function drawBuildings(buildings,widthOfBld){    //display du DOM -création de 
         divBldg.style.left=`${i*widthOfBld}%`;
         divBldg.style.width=`${widthOfBld}%`;
         divBldg.style.backgroundColor=buildings[i].bdCol;
+        //divBldg.style.backgroundImage=`url(../img/windows.png)`;
         divBldg.innerText=buildings[i].bdHeight;
         DOMFenetre.appendChild(divBldg);
     }
 }
 
 function dropBomb(alti,lefti){                 //lancement bombe si aucune bombe déjà en cours, selon position avion
-    if (DOMBomb.innerHTML==""){
     nbBomb+=1;
+    if (DOMBomb.innerHTML=="" && nbBomb>1){
     bombAltitude=alti;
     bombX=lefti;
     DOMBomb.style.bottom=`${bombAltitude}px`;
@@ -118,6 +120,8 @@ function explodeBuilding(bdIndex){        //destruction building par la bombe (h
     //DOMBomb.innerText="";
     document.getElementById(`bd_${bdIndex}`).style.height=buildings[bdIndex].bdHeight;
     kaboom(bdIndex);
+    score +=10;
+    if (hiScore<=score){hiScore=score}
     DOMBomb.innerHTML="";               //suppression de la bombe
 }
 
@@ -170,7 +174,7 @@ function mainGame(){            //boucle principale
         planeX +=planeSpeed;
         if (bombAltitude<550){bombAltitude-=30};
         if (planeX>=98){planeX=-1;altitude -=25;}
-        if(altitude+5 <buildings[findHighest(buildings)].bdHeight){
+        if(altitude+20 <buildings[findHighest(buildings)].bdHeight){
             crashPlane();
             endGame();}
         if (altitude <=-10){
