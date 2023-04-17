@@ -10,7 +10,7 @@ let bombAltitude=550;
 let planeSpeed=2;
 let buildings=[];         //array des buildings [{bdleft:int,'bdheight:int,'bdcol:'#hexa_color'}]
 
-const dropingBomb=document.addEventListener('keyup', ev => {
+let dropingBomb=document.addEventListener('keyup', ev => {
     if (ev.code === 'Space') {dropBomb(altitude,planeX)}
   });
 
@@ -44,7 +44,7 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
 }
 
 function ready(){                              //attente du lancement
-    planeSpeed=Math.floor(2+level*.3);
+    planeSpeed=Math.floor(4+level*.3);
     affichScore();
     if (document.getElementById('startMessage')==undefined){
        let divStartMssg=document.createElement('div');
@@ -52,9 +52,9 @@ function ready(){                              //attente du lancement
        DOMFenetre.appendChild(divStartMssg);
     }
     let divStMssg=document.getElementById('startMessage');
-    divStMssg.innerText=`LEVEL ${level} : PRESS ANY KEY TO START`;
+    divStMssg.innerText=`LEVEL ${level} : PRESS ENTER TO START`;
     const letsStart=document.addEventListener('keyup',ev => {
-        if (ev.code === 'Space') {
+        if (ev.code === 'Enter') {
             divStMssg.innerText="";
             mainGame();}
         });
@@ -169,9 +169,13 @@ function endGame(){                         //fin de partie, sortie de boucle###
     clearInterval(gameLoop);
 }
 async function winRound(){                    //passage au level suivant, retour avion altitude init
-    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
+    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>SAFE LANDING</p>`;
     await timer(500);
+    planeX=0;
+    for(let i=0;i<=98;i++){movePlane(i,550);}
+    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>YOU WIN</p>`;
     endGame();
+    console.log(dropingBomb);
     level+=1;
     altitude=540;
     planeX =-2;
@@ -197,8 +201,9 @@ function mainGame(){            //boucle principale
         if(altitude+20 <buildings[findHighest(buildings)].bdHeight){
             crashPlane();
             endGame();}
-        if (altitude <=-10){winRound();}
-        }, 300);
+        if (buildings[findHighest(buildings)].bdHeight==0){
+                clearInterval(gameLoop); winRound();}
+        }, 400);
 }  
 
 initBuildings(level,buildings);
