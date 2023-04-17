@@ -7,7 +7,7 @@ let planeX=-1;            //position en X de l'avion
 let nbBomb=0;
 let bombX=0;              //position en X de la bombe
 let bombAltitude=550;
-let planeSpeed=2;
+let planeSpeed=3;
 let buildings=[];         //array des buildings [{bdleft:int,'bdheight:int,'bdcol:'#hexa_color'}]
 
 let dropingBomb=document.addEventListener('keyup', ev => {
@@ -44,7 +44,7 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
 }
 
 function ready(){                              //attente du lancement
-    planeSpeed=Math.floor(5+level*.5);
+    planeSpeed=Math.floor(3+level*.5);
     affichScore();
     if (document.getElementById('startMessage')==undefined){
        let divStartMssg=document.createElement('div');
@@ -70,16 +70,19 @@ function findHighest(buildings){               //récupération de l'index du bu
 
 function drawBuildings(buildings,widthOfBld){    //display du DOM -création de buildings
     for(let i=0;i<buildings.length;i++){
-        let divBldg =document.createElement('div');
-        divBldg.setAttribute('class','building');
-        divBldg.setAttribute('id',`bd_${i}`);
-        divBldg.style.height=`${buildings[i].bdHeight}px`;
-        divBldg.style.left=`${i*widthOfBld}%`;
-        divBldg.style.width=`${widthOfBld}%`;
-        divBldg.style.backgroundColor=buildings[i].bdCol;
-        //divBldg.style.backgroundImage=`url(../img/windows.png)`;
-        if(buildings[i].bdHeight>0){divBldg.innerText=buildings[i].bdHeight};
-        DOMFenetre.appendChild(divBldg);
+        if (document.getElementById(`bd_${i}`)==undefined){
+            let divBldg =document.createElement('div');
+            divBldg.setAttribute('class','building');
+            divBldg.setAttribute('id',`bd_${i}`);
+            divBldg.setAttribute('style',"");
+            DOMFenetre.appendChild(divBldg);}
+        let divBldgIndex=document.getElementById(`bd_${i}`);
+        divBldgIndex.removeAttribute('style');
+        if (buildings[i].bdHeight>0){divBldgIndex.style.height=`${buildings[i].bdHeight}px`;}
+        divBldgIndex.style.left=`${i*widthOfBld}%`;
+        divBldgIndex.style.width=`${widthOfBld}%`;
+        divBldgIndex.style.backgroundColor=buildings[i].bdCol;
+        divBldgIndex.style.backgroundImage=`url(../img/windows.png)`;
     }
 }
 
@@ -87,7 +90,8 @@ function dropBomb(alti,lefti){                 //lancement bombe si aucune bombe
     nbBomb+=1;
     if (DOMBomb.innerHTML=="" && nbBomb>1){
     bombAltitude=alti;
-    bombX=lefti;
+    bombX=lefti-.7;
+    if(bombX<1){bombX=1}
     DOMBomb.style.bottom=`${bombAltitude}px`;
     DOMBomb.style.left=`${bombX}%`;
     DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='30px' height='auto'>";}
@@ -111,20 +115,16 @@ async function kaboom(myIndex){               //effet de destruction building pa
         theBuilding.style.backgroundColor=`${boomcolor2}`;
         await timer(70);
     }
-    theBuilding.style.backgroundColor=`${buildings[myIndex].bdCol}`
-    theBuilding.innerText=buildings[myIndex].bdHeight;
+    theBuilding.style.backgroundColor=`${buildings[myIndex].bdCol}`;
     theBuilding.style.height=`${buildings[myIndex].bdHeight}px`;
 
 }
 
 function explodeBuilding(bdIndex){        //destruction building par la bombe (hauteur réduite)
-    buildings[bdIndex].bdHeight-=25;
+    buildings[bdIndex].bdHeight-=Math.floor(300-.3*level);   //#####cheat mode : modif 40/300 #####
     if (buildings[bdIndex].bdHeight<=0){
-        buildings[bdIndex].bdHeight=-3;
-        document.getElementById(`bd_${bdIndex}`).innerText="";
-    }
-    //DOMBomb.innerText="";
-    document.getElementById(`bd_${bdIndex}`).style.height=buildings[bdIndex].bdHeight;
+        buildings[bdIndex].bdHeight=0;
+        document.getElementById(`bd_${bdIndex}`).style.border='none';}
     kaboom(bdIndex);
     score +=10;
     if (hiScore<=score){hiScore=score}
@@ -149,7 +149,8 @@ function movePlane(alti,bombAlti){     //affichage avion
     DOMAvion.innerHTML= "";
     DOMAvion.style.bottom=`${alti}px`;
     DOMAvion.style.left=`${planeX}%`;
-    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' width='80px' height='auto'>`;
+    if(alti==0){DOMAvion.innerHTML=`<p>SAFE LANDING</p><img src='img/spritePlane.gif' height='auto' width='90px'>`;}
+    else {DOMAvion.innerHTML=`<img src='img/spritePlane.gif' width='80px' height='auto'>`;}
     affichScore();
     moveBomb(bombAlti);
 }
@@ -172,18 +173,18 @@ function endGame(){                         //fin de partie, sortie de boucle###
     clearInterval(gameLoop);
 }
 async function winRound(){                    //passage au level suivant, retour avion altitude init
-    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>SAFE LANDING</p>`;
     await timer(500);
-    planeX=0;
-    for(let i=0;i<=98;i++){movePlane(i,550);}
-    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>YOU WIN</p>`;
+    for(let i=0;i<=80;i++){planeX=i; movePlane(0,550); await timer(Math.ceil(50+3*i));}
+    DOMAvion.innerHTML=`<p>YOU WIN</p><img src='img/spritePlane.gif' height='100px' width='auto'>`;
+    await timer(800);
     endGame();
-    console.log(dropingBomb);
+    planeX=0;
     level+=1;
     altitude=540;
     planeX =-2;
     nbBomb =0;
     buildings=[];
+    DOMAvion.innerHTML="";
     initBuildings(level,buildings);
     await timer(500);
     document.addEventListener('keyup', ev => {
@@ -201,12 +202,12 @@ function mainGame(){            //boucle principale
         planeX +=planeSpeed;
         if (bombAltitude<550){bombAltitude-=40};
         if (planeX>=98){planeX=-1;altitude -=25;}
-        if(altitude+20 <buildings[findHighest(buildings)].bdHeight){
+        if(altitude+10 <buildings[findHighest(buildings)].bdHeight){
             crashPlane();
             endGame();}
         if (buildings[findHighest(buildings)].bdHeight==0){
                 clearInterval(gameLoop); winRound();}
-        }, 400);
+        }, 300);
 }  
 
 initBuildings(level,buildings);
