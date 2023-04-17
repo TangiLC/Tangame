@@ -34,14 +34,13 @@ body{
     display:inline-block;
     position:absolute;
     z-index: 99;
-    border:2px solid red;
 }
 
 #bomb{
     display:inline-block;
     position:absolute;
     z-index: 10;
-    border:2px solid blue;
+    
 }
 
 .building{
@@ -51,4 +50,12 @@ body{
     z-index: 1;
     border:1px solid black;
     font-size: 70%;
+}
+
+.startMessage{
+    display:inline-block;
+    position:absolute;
+    bottom:50%;
+    margin:auto;
+    z-index:99;
 }
