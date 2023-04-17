@@ -1,4 +1,4 @@
-let level=6;
+let level=1;
 let score=0;
 let hiScore=0;
 let altitude=540;
@@ -37,7 +37,7 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
     let widthOfBld = (99/(numberOfBld));
     for (let i=0; i<numberOfBld; i++){
         let colorIndex=Math.floor(Math.random()*15);
-        let buildingHeight=50+Math.floor(Math.random()*280);
+        let buildingHeight=10+Math.floor(Math.random()*15);        //modifier pour level##########################
         buildings[i]={'bdleft':i*widthOfBld,'bdHeight':buildingHeight,'bdCol':buildingCol[colorIndex]}
     }
     drawBuildings(buildings,widthOfBld);
@@ -46,13 +46,16 @@ function initBuildings(level,buildings){       //création aléatoire des buildi
 function ready(){                              //attente du lancement
     planeSpeed=Math.floor(2+level*.3);
     affichScore();
-    let divStartMssg=document.createElement('div');
-    divStartMssg.setAttribute('class','startMessage');
-    divStartMssg.innerText=`LEVEL ${level} : PRESS ANY KEY TO START`;
-    DOMFenetre.appendChild(divStartMssg);
+    if (document.getElementById('startMessage')==undefined){
+       let divStartMssg=document.createElement('div');
+       divStartMssg.setAttribute('id','startMessage');
+       DOMFenetre.appendChild(divStartMssg);
+    }
+    let divStMssg=document.getElementById('startMessage');
+    divStMssg.innerText=`LEVEL ${level} : PRESS ANY KEY TO START`;
     const letsStart=document.addEventListener('keyup',ev => {
         if (ev.code === 'Space') {
-            divStartMssg.innerText="";
+            divStMssg.innerText="";
             mainGame();}
         });
 }
@@ -158,12 +161,29 @@ function crashPlane(){               //altitude avion <altitude batiment
     endGame();
 }
 
-function endGame(){
+function endGame(){                         //fin de partie, sortie de boucle################
     document.removeEventListener('keyup', ev => {
         if (ev.code === 'Space') {dropBomb(altitude,planeX)}
       });
     planeSpeed=0;
     clearInterval(gameLoop);
+}
+async function winRound(){                    //passage au level suivant, retour avion altitude init
+    DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
+    await timer(500);
+    endGame();
+    level+=1;
+    altitude=540;
+    planeX =-2;
+    nbBomb =0;
+    buildings=[];
+    initBuildings(level,buildings);
+    await timer(500);
+    document.addEventListener('keyup', ev => {
+        if (ev.code === 'Space') {dropBomb(altitude,planeX)}
+      });
+    ready();
+
 }
 
 
@@ -177,9 +197,7 @@ function mainGame(){            //boucle principale
         if(altitude+20 <buildings[findHighest(buildings)].bdHeight){
             crashPlane();
             endGame();}
-        if (altitude <=-10){
-            DOMAvion.innerHTML=`<img src='img/spritePlane.gif' height='60px' width='auto'><p>WIN</p>`;
-            endGame();}
+        if (altitude <=-10){winRound();}
         }, 300);
 }  
 
