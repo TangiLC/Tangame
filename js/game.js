@@ -50,7 +50,7 @@ function dropBomb(alti,lefti){                 //lancement bombe si aucune bombe
     if(bombX<1){bombX=1}
     DOMBomb.style.bottom=`${bombAltitude}px`;
     DOMBomb.style.left=`${bombX}%`;
-    DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='30px' height='auto'>";}
+    DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='15px' height='auto'>";}
 }
 
 function affichScore(){
@@ -76,13 +76,16 @@ function moveBomb(bombAlti){            //descente de la bombe -contrôle du bui
     if (bdIndex<0){bdIndex=0}
     if (bombAlti>buildings[bdIndex].bdHeight && DOMBomb.innerHTML!="" && bombAlti>0){
         DOMBomb.style.bottom=`${bombAlti}px`;
-        DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='30px' height='auto'>";
+        DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='15px' height='auto'>";
 
     }
     else if (bombAlti<=buildings[bdIndex].bdHeight && DOMBomb.innerHTML!=""){
-        DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='50px' height='auto'>";
+        DOMBomb.style.bottom=`${bombAlti-7}px`;
+        if(bombAlti>0){DOMBomb.style.left=`${bombX-1}%`
+        DOMBomb.innerHTML="<img src='img/kaboom.gif' width='90px' height='25px'>";}
+        else {DOMBomb.innerHTML="";}
         bombAltitude=550;
-        explodeBuilding(bdIndex);
+        setTimeout(function(){explodeBuilding(bdIndex)},200);
         affichScore();}
 }
 
@@ -103,9 +106,9 @@ function crashPlane(){               //altitude avion <altitude batiment
     DOMAim.className ="noAlert";
     DOMAim.innerText="CRASH BLD #"+(findHighest(buildings)+1).toString();    
     DOMAvion.style.left=`${crashIndex}%`;
-    DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='90px' width='auto'>`;
+    DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='50px' width='auto'>`;
     console.log('crash at',altitude,findHighest(buildings));
-    endGame();
+    setTimeout(function(){endGame()},800);
 }
 
 async function endGame(){                         //fin de partie, sortie de boucle################
