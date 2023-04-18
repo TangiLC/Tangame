@@ -44,7 +44,7 @@ function drawBuildings(buildings,widthOfBld){    //display du DOM -création de 
         divBldgIndex.style.left=`${i*widthOfBld}%`;
         divBldgIndex.style.width=`${widthOfBld}%`;
         divBldgIndex.style.backgroundColor=buildings[i].bdCol;
-        divBldgIndex.style.backgroundImage=`url(../img/windows.png)`;
+        divBldgIndex.style.backgroundImage=`url(img/windows.png)`;
     }
 }
 

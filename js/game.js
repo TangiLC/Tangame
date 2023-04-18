@@ -63,7 +63,7 @@ function affichScore(){
         DOMAim.classList.toggle('aimAlert');
         DOMAim.innerText="WARNING Bld n#"+(findHighest(buildings)+1).toString();
     }
-    else {//DOMAim.classList.toggle('aimAlert');
+    else {DOMAim.classList.remove('aimAlert');
     DOMAim.innerText="Aim Bld n#"+(findHighest(buildings)+1).toString();}
 
 }
@@ -125,6 +125,7 @@ function newLevel(){
         bombAltitude=550;
         buildings=[];
         DOMAvion.innerHTML="";
+        DOMAim.innerText="NEXT LEVEL";
         initBuildings(level,buildings);
        /* document.addEventListener('keyup', ev => {
             if (ev.code === 'Space') {dropBomb(altitude,planeX)}
@@ -137,6 +138,8 @@ async function winRound(){                    //passage au level suivant, retour
     //await timer(500);
     nbBomb=-1;
     newGame=0;
+    DOMAim.classList.remove('aimAlert');
+    DOMAim.innerText="SAFE LANDING";
     DOMBomb.innerHTML="";
     DOMAvion.style.bottom=`0px`;
     DOMAvion.innerHTML=`<p>SAFE LANDING</p><img src='img/spritePlane.gif' height='auto' width='90px'>`;
