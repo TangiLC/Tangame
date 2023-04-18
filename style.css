@@ -69,3 +69,13 @@ body{
     color:black;
     text-shadow: 1px 1px white;
 }
+
+.alert {
+    border: 2px red solid;
+    animation: blink .6s linear infinite;
+}
+
+.noAlert{
+    border: 2px solid black;
+}
+@keyframes blink { 50% { border-color:white ; background-color: red; color :white;}  }

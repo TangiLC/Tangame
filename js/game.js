@@ -1,4 +1,4 @@
-let cheatOn=1;
+let cheatOn=0;
 let level=1;
 let score=0;
 let hiScore=0;
@@ -59,6 +59,11 @@ function affichScore(){
     DOMAlti.innerText="Altitude "+(altitude*10).toString().padStart(5,0);
     DOMAim.innerText="Aim Bld#"+(findHighest(buildings)+1).toString();
     DOMAim.style.backgroundColor=buildings[findHighest(buildings)].bdCol;
+    if ((altitude-2*Math.ceil(25+level*.3))<=buildings[findHighest(buildings)].bdHeight){ 
+        if (DOMAim.className =="noAlert"){DOMAim.className ="alert"}
+    }
+    else {DOMAim.className ="noAlert"}
+
 }
 
 const timer = ms => new Promise(res => setTimeout(res, ms))
@@ -101,7 +106,7 @@ function movePlane(alti,posX,bombAlti){     //affichage avion
 }
 
 function crashPlane(){               //altitude avion <altitude batiment
-    let crashIndex=findHighest(buildings)*(99/(6+3*level));
+    let crashIndex=findHighest(buildings)*(99/(6+2*level));
     console.log(crashIndex);
         
     DOMAvion.style.left=`${crashIndex}%`;
@@ -157,8 +162,8 @@ function mainGame(){            //boucle principale
         movePlane(altitude,planeX,bombAltitude);
         planeX +=planeSpeed;
         if (bombAltitude<550){bombAltitude-=40};
-        if (planeX>=98){planeX=-1;altitude -=25;}
-        if(altitude+10 <buildings[findHighest(buildings)].bdHeight){
+        if (planeX>=98){planeX=-1;altitude -=Math.floor(25+level*.3);}
+        if(altitude+10 <buildings[findHighest(buildings)].bdHeight && planeX>=findHighest(buildings)*(99/(6+2*level))){
             nbBomb=-1;
             crashPlane();
             endGame();}
