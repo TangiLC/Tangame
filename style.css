@@ -62,3 +62,8 @@ body{
     justify-content: center;
     z-index:99;
 }
+
+#aim{
+    font-weight:700;
+    background-color: #CCCCCC;
+}
