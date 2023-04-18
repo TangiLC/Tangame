@@ -1,4 +1,5 @@
 let cheatOn=0;
+let newGame=1;
 let level=1;
 let score=0;
 let hiScore=0;
@@ -21,7 +22,7 @@ const DOMBomb=document.getElementById('bomb');          //la div en position abs
 const DOMFenetre=document.getElementById('fenetre');    //la zone de jeu
 let keyListen=document.addEventListener('keyup', ev => {
     if (ev.code === 'Space' && nbBomb!=-1) {dropBomb(altitude,planeX)}
-    if (ev.code === 'Space' && nbBomb==-1) {
+    if (ev.code === 'Space' && nbBomb==-1 && newGame) {
         document.getElementById('startMessage').innerText="";
         mainGame();}
   });
@@ -59,29 +60,16 @@ function affichScore(){
     DOMAlti.innerText="Altitude "+(altitude*10).toString().padStart(5,0);
     DOMAim.style.backgroundColor=buildings[findHighest(buildings)].bdCol;
     if ((altitude-2*Math.ceil(25+level*.3))<=buildings[findHighest(buildings)].bdHeight){ 
-        if (DOMAim.className =="noAlert"){DOMAim.className ="aimAlert";
-        DOMAim.innerText="WARNING Bld n#"+(findHighest(buildings)+1).toString();}
+        DOMAim.classList.toggle('aimAlert');
+        DOMAim.innerText="WARNING Bld n#"+(findHighest(buildings)+1).toString();
     }
-    else {DOMAim.className ="noAlert"; 
+    else {//DOMAim.classList.toggle('aimAlert');
     DOMAim.innerText="Aim Bld n#"+(findHighest(buildings)+1).toString();}
 
 }
 
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
-async function kaboom(myIndex){               //effet de destruction building par la bombe
-    let boomcolor1='#FF0000'; let boomcolor2='#FFFFFF';
-    let theBuilding=document.getElementById(`bd_${myIndex}`);
-    for(let i=0;i<3;i++){
-        theBuilding.style.backgroundColor=`${boomcolor1}`;
-        await timer(70);
-        theBuilding.style.backgroundColor=`${boomcolor2}`;
-        await timer(70);
-    }
-    theBuilding.style.backgroundColor=`${buildings[myIndex].bdCol}`;
-    theBuilding.style.height=`${buildings[myIndex].bdHeight}px`;
-
-}
 
 function moveBomb(bombAlti){            //descente de la bombe -contrôle du building dessous
     let bdIndex=Math.floor(bombX/(99/(6+2*level)));
@@ -94,7 +82,8 @@ function moveBomb(bombAlti){            //descente de la bombe -contrôle du bui
     else if (bombAlti<=buildings[bdIndex].bdHeight && DOMBomb.innerHTML!=""){
         DOMBomb.innerHTML="<img src='img/torpedo.bmp' width='50px' height='auto'>";
         bombAltitude=550;
-        explodeBuilding(bdIndex);}
+        explodeBuilding(bdIndex);
+        affichScore();}
 }
 
 function movePlane(alti,posX,bombAlti){     //affichage avion
@@ -107,24 +96,28 @@ function movePlane(alti,posX,bombAlti){     //affichage avion
 }
 
 function crashPlane(){               //altitude avion <altitude batiment
+    nbBomb=-1;
+    newGame=0;
+    //document.removeEventListener('keyup', {});
     let crashIndex=findHighest(buildings)*(99/(6+2*level));
-    console.log(crashIndex);
     DOMAim.className ="noAlert";
     DOMAim.innerText="CRASH BLD #"+(findHighest(buildings)+1).toString();    
     DOMAvion.style.left=`${crashIndex}%`;
     DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='90px' width='auto'>`;
     console.log('crash at',altitude,findHighest(buildings));
+    endGame();
 }
 
 async function endGame(){                         //fin de partie, sortie de boucle################
-    document.removeEventListener('keyup', {});
+    
     planeSpeed=0;
-    clearInterval(gameLoop);
+    
     
 }
 
 function newLevel(){
     if(altitude==-1){
+        newGame=1;
         planeX=-2;
         level+=1;
         altitude=550-level;
@@ -142,9 +135,12 @@ function newLevel(){
 
 async function winRound(){                    //passage au level suivant, retour avion altitude init
     //await timer(500);
+    nbBomb=-1;
+    newGame=0;
+    DOMBomb.innerHTML="";
     DOMAvion.style.bottom=`0px`;
     DOMAvion.innerHTML=`<p>SAFE LANDING</p><img src='img/spritePlane.gif' height='auto' width='90px'>`;
-    document.removeEventListener('keyup', ev =>{});
+    //document.removeEventListener('keyup', ev =>{});
     
     for(let landing=0;landing<=80;landing+=5){
         DOMAvion.style.left=`${landing}%`;
@@ -163,9 +159,9 @@ function mainGame(){            //boucle principale
         if (bombAltitude<550){bombAltitude-=40};
         if (planeX>=98){planeX=-1;altitude -=Math.floor(25+level*.3);}
         if(altitude+10 <buildings[findHighest(buildings)].bdHeight && planeX>=findHighest(buildings)*(99/(6+2*level))){
-            nbBomb=-1;
+            clearInterval(gameLoop);
             crashPlane();
-            endGame();}
+            }
         if (buildings[findHighest(buildings)].bdHeight==0){
                 clearInterval(gameLoop); altitude=-1; setTimeout(winRound(),200);}
         }, 300);

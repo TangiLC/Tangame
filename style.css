@@ -51,8 +51,8 @@ body{
     z-index: 1;
     color : white;
     font-weight: 600;
-    border:3px solid black;
     font-size: 70%;
+    border: 3px solid black;
 }
 
 #startMessage{
@@ -68,14 +68,12 @@ body{
 #aim{
     color:black;
     text-shadow: 1px 1px white;
+    border: 2px solid black;
 }
 
 .aimAlert {
     border: 2px red solid;
-    animation: blink .6s linear infinite;
+    animation: blink .4s linear infinite;
 }
 
-.noAlert{
-    border: 2px solid black;
-}
 @keyframes blink { 50% { border-color:white ; background-color: red; color :white;}  }

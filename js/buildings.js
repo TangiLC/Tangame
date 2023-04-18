@@ -51,12 +51,20 @@ function drawBuildings(buildings,widthOfBld){    //display du DOM -création de 
 function explodeBuilding(bdIndex){        //destruction building par la bombe (hauteur réduite)
     if (bdIndex==findHighest(buildings)){score+=25;}
     else{score +=10;}
-    buildings[bdIndex].bdHeight-=Math.floor(300*cheatOn+(40-.3*level));   //#####cheat mode : rase tout #####
+    buildings[bdIndex].bdHeight-=Math.floor(300*cheatOn+(55-.3*level));   //#####cheat mode : rase tout #####
     if (buildings[bdIndex].bdHeight<=0){
         buildings[bdIndex].bdHeight=0;
         document.getElementById(`bd_${bdIndex}`).style.border='none';}
     kaboom(bdIndex);
-    
     if (hiScore<=score){hiScore=score}
     DOMBomb.innerHTML="";               //suppression de la bombe
+}
+
+function kaboom(myIndex){               //effet de destruction building par la bombe
+    let theBuilding=document.getElementById(`bd_${myIndex}`);
+    theBuilding.classList.add('aimAlert');
+    theBuilding.style.height=`${buildings[myIndex].bdHeight}px`;
+    DOMBomb.innerHTML="";
+    bombAltitude=550;
+    setTimeout(function(){theBuilding.classList.remove('aimAlert')},1210);
 }
