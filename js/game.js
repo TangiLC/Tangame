@@ -1,5 +1,5 @@
 let cheatOn=0;
-let level=6;
+let level=1;
 let score=0;
 let hiScore=0;
 let altitude=540;
