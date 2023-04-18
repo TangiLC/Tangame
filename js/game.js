@@ -1,5 +1,5 @@
 let cheatOn=0;
-let level=1;
+let level=6;
 let score=0;
 let hiScore=0;
 let altitude=540;
@@ -57,12 +57,13 @@ function affichScore(){
     DOMScore.innerText="Level "+level.toString().padStart(5,0);
     DOMHiScore.innerText="*High "+hiScore.toString().padStart(5,0);
     DOMAlti.innerText="Altitude "+(altitude*10).toString().padStart(5,0);
-    DOMAim.innerText="Aim Bld#"+(findHighest(buildings)+1).toString();
     DOMAim.style.backgroundColor=buildings[findHighest(buildings)].bdCol;
     if ((altitude-2*Math.ceil(25+level*.3))<=buildings[findHighest(buildings)].bdHeight){ 
-        if (DOMAim.className =="noAlert"){DOMAim.className ="alert"}
+        if (DOMAim.className =="noAlert"){DOMAim.className ="aimAlert";
+        DOMAim.innerText="WARNING Bld n#"+(findHighest(buildings)+1).toString();}
     }
-    else {DOMAim.className ="noAlert"}
+    else {DOMAim.className ="noAlert"; 
+    DOMAim.innerText="Aim Bld n#"+(findHighest(buildings)+1).toString();}
 
 }
 
@@ -108,16 +109,15 @@ function movePlane(alti,posX,bombAlti){     //affichage avion
 function crashPlane(){               //altitude avion <altitude batiment
     let crashIndex=findHighest(buildings)*(99/(6+2*level));
     console.log(crashIndex);
-        
+    DOMAim.className ="noAlert";
+    DOMAim.innerText="CRASH BLD #"+(findHighest(buildings)+1).toString();    
     DOMAvion.style.left=`${crashIndex}%`;
     DOMAvion.innerHTML=`<p>YOU LOST</p><img src='img/kaboom.gif' height='90px' width='auto'>`;
     console.log('crash at',altitude,findHighest(buildings));
 }
 
 async function endGame(){                         //fin de partie, sortie de boucle################
-    document.removeEventListener('keyup', ev => {
-        if (ev.code === 'Space') {dropBomb(altitude,planeX)}
-      });
+    document.removeEventListener('keyup', {});
     planeSpeed=0;
     clearInterval(gameLoop);
     
@@ -151,7 +151,6 @@ async function winRound(){                    //passage au level suivant, retour
         await timer(Math.ceil(50+3*landing));
     }
     setTimeout(newLevel(),3000);
-    
     
 }
 
